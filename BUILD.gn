@@ -1,0 +1,35 @@
+executable("hello") {
+    public_configs = [
+        ":cf",
+        "//build/config/linux/dbus",
+    ]
+    sources = [
+        "src/main.cc",
+        "src/test_service.cc",
+    ]
+}
+
+config("cf") {
+    cflags = [
+        "-fno-exceptions",
+        "-fno-rtti",
+        "-nostdinc++",
+        "-isystem/exdatabd/sdk-test/base/buildtools/third_party/libc++/trunk/include",
+    ]
+
+    include_dirs = [
+        "/exdatabd/sdk-test/base",
+        "/exdatabd/sdk-test/base/buildtools/third_party/libc++",
+        "/exdatabd/sdk-test/base/third_party/abseil-cpp"
+    ]
+
+    lib_dirs = [
+        "/exdatabd/sdk-test/base/lib",
+    ]
+
+    libs = [
+        "base",
+        "c++",
+        "dbus",
+    ]
+}

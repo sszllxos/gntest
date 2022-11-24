@@ -1,0 +1,17 @@
+toolchain("clang") {
+    tool("cxx"){
+        command = "clang++ {{defines}} {{include_dirs}} {{cflags}} {{cflags_cc}} -c {{source}} -o {{output}}"
+        # outputs = [ "{{source_out_dir}}/{{target_output_name}}.o" ]
+        outputs = [ "{{source_out_dir}}/{{source_name_part}}.o" ]
+    }
+
+    tool("link"){
+        exe_name = "{{root_out_dir}}/{{target_output_name}}{{output_extension}}"
+        command = "clang++ {{ldflags}} {{inputs}} -o $exe_name {{libs}}"
+        outputs = ["$exe_name"]
+    }
+
+    tool("stamp") {
+        command = "touch {{output}}"
+    }
+}
