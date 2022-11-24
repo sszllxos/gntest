@@ -1,27 +1,17 @@
 #include <iostream>
-#include <base/at_exit.h>
-#include <base/command_line.h>
-#include <base/message_loop/message_pump_type.h>
-#include <base/test/test_timeouts.h>
-#include <base/time/time.h>
-#include <dbus/bus.h>
-#include <dbus/test_service.h>
+
+#include <base/run_loop.h>
+#include <base/task/single_thread_task_executor.h>
+#include <base/threading/thread_task_runner_handle.h>
 
 int main(int argc, char** argv) {
-    base::AtExitManager exit_manager;
-    base::CommandLine::Init(argc, argv);
-//    TestTimeouts::Initialize();
+    std::unique_ptr<base::SingleThreadTaskExecutor> main_thread_task_executor
+            = std::make_unique<base::SingleThreadTaskExecutor>(base::MessagePumpType::DEFAULT);
 
-    base::Thread dbus_thread("D-Bus Thread");
-    base::Thread::Options thread_options;
-    thread_options.message_pump_type = base::MessagePumpType::IO;
-    CHECK(dbus_thread.StartWithOptions(std::move(thread_options)));
-
-    dbus::TestService::Options options;
-    options.dbus_task_runner = dbus_thread.task_runner();
-    dbus::TestService* test_service = new dbus::TestService(options);
-    CHECK(test_service->StartService());
-    test_service->WaitUntilServiceIsStarted();
-    CHECK(test_service->HasDBusThread());
-    std::cout << "exit" << std::endl;
+    base::RunLoop rl;
+    base::ThreadTaskRunnerHandle::Get()->PostTask(FROM_HERE,
+                                                  base::BindOnce([]() {
+                                                      std::cout << "asdf" << std::endl;
+                                                  }));
+    rl.Run();
 }
